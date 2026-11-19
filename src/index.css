@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+/*
+  Ledger design tokens.
+  Paper and ink, not glass and gradients: warm stock, hairline rules, a serif for
+  the voice, a grotesk for the interface and a monospace for every figure.
+  Chart hues (net, pension, PAYE, cooperative, loans) are a validated categorical set.
+*/
+@theme {
+  --font-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Manrope Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* surfaces */
+  --color-paper: #f4f5f1;
+  --color-paper-2: #eceee9;
+  --color-card: #ffffff;
+  --color-ink: #0f1a14;
+  --color-ink-2: #34403a;
+  --color-muted: #66716b;
+  --color-faint: #9aa39e;
+  --color-rule: #e6e9e4;
+  --color-rule-strong: #cfd5d0;
+  --color-marker: #d7f26a;
+
+  /* brand + chart hues (chart order validated for CVD; don't reorder) */
+  --color-moss: #0e7a4e;
+  --color-moss-deep: #0a3d29;
+  --color-moss-wash: #e2f3e9;
+  --color-azure: #2f5db0;
+  --color-azure-wash: #e6eefb;
+  --color-terra: #c9502a;
+  --color-terra-wash: #fbebe4;
+  --color-plum: #8e4aa0;
+  --color-plum-wash: #f3e9f6;
+  --color-ochre: #a87d0e;
+  --color-ochre-wash: #f7f0dc;
+
+  --color-danger: #c0362c;
+  --color-danger-wash: #fdecea;
+  --color-warn: #9a6200;
+  --color-warn-wash: #fdf3dc;
+
+  --shadow-slip: 0 1px 2px rgba(15, 26, 20, 0.04), 0 12px 32px -12px rgba(15, 26, 20, 0.18);
+  --shadow-card: 0 1px 2px rgba(15, 26, 20, 0.04), 0 1px 1px rgba(15, 26, 20, 0.02);
+  --shadow-lift: 0 2px 4px rgba(15, 26, 20, 0.04), 0 16px 40px -16px rgba(15, 26, 20, 0.22);
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "tnum" 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--color-marker); color: var(--color-ink); }
+  :focus-visible { outline: 2px solid var(--color-moss); outline-offset: 2px; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+}
+
+@layer components {
+  /* Figures: tabular so columns of money line up and values don't jitter. */
+  .figure { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-muted);
+  }
+
+  .card {
+    background: var(--color-card);
+    border: 1px solid var(--color-rule);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  .ruled {
+    background-image: repeating-linear-gradient(to bottom, transparent 0 31px, rgba(15, 26, 20, 0.05) 31px 32px);
+  }
+  .grain {
+    background-image: radial-gradient(rgba(15, 26, 20, 0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+  .perforation {
+    height: 14px;
+    background: radial-gradient(circle at 7px 7px, var(--color-paper) 4px, transparent 4.5px) 0 0 / 14px 14px repeat-x;
+  }
+
+  /* Tables sit in a rounded card (the scroll wrapper doubles as the card). */
+  .overflow-x-auto:has(> .ledger-table) {
+    background: var(--color-card);
+    border: 1px solid var(--color-rule);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+  }
+  .ledger-table { position: relative; width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  .ledger-table th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: #fafbf9;
+    border-bottom: 1px solid var(--color-rule);
+    white-space: nowrap;
+  }
+  .ledger-table td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--color-rule); vertical-align: middle; }
+  .ledger-table tbody tr:last-child td { border-bottom: 0; }
+  .ledger-table tbody tr { transition: background-color 120ms; }
+  .ledger-table tbody tr[data-clickable]:hover { background: #f7f9f6; cursor: pointer; }
+  .ledger-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .input {
+    width: 100%;
+    background: var(--color-card);
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 0.625rem;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.9rem;
+    color: var(--color-ink);
+    transition: border-color 120ms, box-shadow 120ms;
+  }
+  .input::placeholder { color: var(--color-faint); }
+  .input:hover { border-color: var(--color-faint); }
+  .input:focus { outline: none; border-color: var(--color-moss); box-shadow: 0 0 0 4px rgba(14, 122, 78, 0.14); }
+  .input[aria-invalid="true"] { border-color: var(--color-danger); }
+  select.input {
+    appearance: none;
+    padding-right: 2rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2366716b' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
